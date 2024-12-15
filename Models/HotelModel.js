@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// Define the schema
+
 const hotelSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -28,6 +28,19 @@ const hotelSchema = new mongoose.Schema({
             type: String,
             required: true,
         },
+        longitude: {
+            type: Number,
+            required: true, // Mark as required if it's mandatory
+            min: -180,
+            max: 180,
+        },
+        latitude: {
+            type: Number,
+            required: true, // Mark as required if it's mandatory
+            min: -90,
+            max: 90,
+        },
+
     },
     description: {
         type: String,
@@ -47,8 +60,8 @@ const hotelSchema = new mongoose.Schema({
     ], // E.g., ["Free WiFi", "Pool", "Gym"]
     images: [
         {
-            url: String,
-            description: String,
+            url: { type: String, required: true }, // Make `url` required to ensure proper validation
+            description: { type: String, default: '' }, // Optional description
         },
     ],
     rating: {
@@ -59,17 +72,23 @@ const hotelSchema = new mongoose.Schema({
     },
     reviews: [
         {
-            userId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'User', // Reference to User schema
+            email: {
+                type: String,
+
+            },
+            username: {
+                type: String,
+
             },
             comment: {
                 type: String,
+
             },
             rating: {
                 type: Number,
                 min: 1,
                 max: 5,
+
             },
         },
     ],
