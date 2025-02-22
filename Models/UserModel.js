@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    isVerified:{
+        type:Boolean,
+        default:false,
+    },
     email: {
         type: String,
         required: true,
@@ -51,13 +55,13 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-userSchema.pre('save', async function(next){
+// userSchema.pre('save', async function(next){
      
-    if(!this.isModified('password')) return next(); 
+//     if(!this.isModified('password')) return next(); 
 
-    const saltRounds = parseInt(process.env.SALT,10) || 10;
-    this.password = await bcrypt.hash(this.password, saltRounds);
-})
+//     const saltRounds = parseInt(process.env.SALT,10) || 10;
+//     this.password = await bcrypt.hash(this.password, saltRounds);
+// })
 userSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
     next();
