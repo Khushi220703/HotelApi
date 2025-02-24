@@ -4,26 +4,27 @@ const cloudinary = require('cloudinary').v2;
 
 
 const addHotel = async (req, res) => {
-    const { name, location, description, rooms, amenities, images, rating, reviews, pricePerNight,imageDescriptions } = req.body;
+    const { name, location, description, email, rooms,images, amenities,  rating, pricePerNight,imageDescriptions } = req.body;
     const imagess = req.files; // chnage name of imagess when not using postman.
    
+  // console.log(imagess);
+   
     
-    if (!images || images.length === 0) {
-        return res.status(400).send({ message: "Please upload at least three image." });
-    }
+    console.log(req.body);
+    
     
     
     try {
        
-    //     const uploadedImages = [];
-    //     for(let i = 0;i<imagess.length;i++){
+        const uploadedImages = [];
+        for(let i = 0;i<imagess.length;i++){
             
-    //         const image = {
-    //             url: images[i].path,
-    //             description: imageDescriptions[i] || ''
-    //         }
-    //         uploadedImages.push(image);
-    //     }
+            const image = {
+                url: imagess[i].path,
+                description: imageDescriptions[i] || ''
+            }
+            uploadedImages.push(image);
+        }
 
     //    console.log(uploadedImages);
        
@@ -31,12 +32,13 @@ const addHotel = async (req, res) => {
         const newHotel = new HotelModel({
             name,
             location,
+            email,
             description,
             rooms,
             amenities,
-            images,  // :uploadedImages , // Save the Cloudinary URLs in the `images` field
+            images:uploadedImages , // Save the Cloudinary URLs in the `images` field
             rating,
-            reviews,
+           
             pricePerNight,
         });
 

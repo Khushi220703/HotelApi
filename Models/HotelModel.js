@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { required } = require('nodemon/lib/config');
 
 
 const hotelSchema = new mongoose.Schema({
@@ -31,13 +32,13 @@ const hotelSchema = new mongoose.Schema({
         },
         longitude: {
             type: Number,
-            required: true, // Mark as required if it's mandatory
+           
             min: -180,
             max: 180,
         },
         latitude: {
             type: Number,
-            required: true, // Mark as required if it's mandatory
+           
             min: -90,
             max: 90,
         },
@@ -46,6 +47,11 @@ const hotelSchema = new mongoose.Schema({
     description: {
         type: String,
         trim: true,
+    },
+    email: {
+        type: String,
+        trim: true,
+        required:true
     },
     rooms: [
         {
