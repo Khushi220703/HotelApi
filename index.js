@@ -6,15 +6,16 @@ const connection = require("./Config/DBConfig")
 const path = 5000 || process.env.PATH;
 const cors = require('cors');
 
-app.use(express.json());
-
+app.use(express.json()); // Increase JSON payload size
+app.use(express.urlencoded({ limit: "50mb", extended: true })); // Increase URL-encoded data limit
+app.use(cors({
+    origin: "http://localhost:5173", // Allow frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 connection();
 
-app.use(cors({
-    origin: '*', 
-    methods: ['GET', 'POST', 'PUT', 'DELETE',"PATCH"], 
-    credentials: true,
-  }));
+
 
 app.use("/api/user", require("./Routes/UserRoutes"));
 app.use("/api/hotel", require("./Routes/HotelRoutes"));

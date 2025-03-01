@@ -1,65 +1,85 @@
 const HotelModel = require("../Models/HotelModel");
+const HotelUser = require("../Models/UserModel");
 const cloudinary = require('cloudinary').v2;
 
 
 
 const addHotel = async (req, res) => {
-    const { name, location, description, email, rooms,images, amenities,  rating, pricePerNight,imageDescriptions } = req.body;
-    const imagess = req.files; // chnage name of imagess when not using postman.
    
-  // console.log(imagess);
-   
-    
-    console.log(req.body);
-    
-    
-    
+
     try {
+      
+        
+        const { name, location, description, email, rooms, amenities, rating, pricePerNight,imageDescriptions} = req.body;
+        const images = req.files; // Ensure images are received
+        // const imageDescriptions = Array.isArray(req.body.imageDescriptions)
+        //     ? req.body.imageDescriptions
+        //     : [req.body.imageDescriptions];
+        const parsedLoaction = JSON.parse(location);
+        const parsedAmenities = JSON.parse(amenities);
+        const paredImageDescriptions = JSON.parse(imageDescriptions);
+
+        if (!images || images.length === 0) {
+            return res.status(400).send({ message: "Please upload at least three image." });
+        }
+    
        
+        
         const uploadedImages = [];
-        for(let i = 0;i<imagess.length;i++){
-            
+        for(let i = 0;i<images.length;i++){
+
+   
             const image = {
-                url: imagess[i].path,
-                description: imageDescriptions[i] || ''
+                url: images[i].path,
+                description: paredImageDescriptions[i] || ''
             }
             uploadedImages.push(image);
         }
 
-    //    console.log(uploadedImages);
        
-        // Create a new hotel document
         const newHotel = new HotelModel({
             name,
-            location,
+            location:parsedLoaction,
             email,
             description,
             rooms,
-            amenities,
-            images:uploadedImages , // Save the Cloudinary URLs in the `images` field
+            amenities:parsedAmenities,
+            images: uploadedImages,
             rating,
-           
             pricePerNight,
         });
 
         await newHotel.save();
-        res.status(201).send({ message: "Hotel added successfully!" });
+        res.status(201).json({ message: "Hotel added successfully!" });
     } catch (error) {
-        console.error(error);
-        res.status(500).send({ message: "Error uploading hotel details to the server." });
+        console.error("Error adding hotel:", error);
+        res.status(500).json({ message: "Error uploading hotel details to the server." });
     }
 };
 
 
 const getAllHotel = async (req,res) =>{
    
+    const {email} = req.params;
+    
     
     
     try {
+
+        const responses = await HotelUser.findOne({email});
+
+        if(responses.role === "admin"){
+        
+        const response = await HotelModel.find({email:email});
+        res.status(200).send(response);
+    }else{
+
         const response = await HotelModel.find();
+        console.log(response);
         
         
         res.status(200).send(response);
+    }
 
     } catch (error) {
 
