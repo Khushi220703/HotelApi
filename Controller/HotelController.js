@@ -57,36 +57,74 @@ const addHotel = async (req, res) => {
     }
 };
 
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of Earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+  
+  function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+  }
+  
 
-const getAllHotel = async (req,res) =>{
-   
-    const {email} = req.params;
-    
-    
-    
+  const getAllHotel = async (req, res) => {
+    const { email } = req.params;
+    const { latitude, longitude } = req.query;
+  
+    console.log("Query params received:", { latitude, longitude });
+  
     try {
-
-        const responses = await HotelUser.findOne({email});
-
-        if(responses.role === "admin"){
-        
-        const response = await HotelModel.find({email:email});
-        res.status(200).send(response);
-    }else{
-
-        const response = await HotelModel.find();
-        console.log(response);
-        
-        
-        res.status(200).send(response);
-    }
-
+      const user = await HotelUser.findOne({ email });
+      if (!user) return res.status(404).send({ message: "User not found" });
+  
+      if (user.role === "admin") {
+        const adminHotels = await HotelModel.find({ email });
+        return res.status(200).send(adminHotels);
+      }
+  
+      const allHotels = await HotelModel.find();
+  
+      // Check if lat/lon exist
+      if (latitude && longitude) {
+        const userLat = parseFloat(latitude);
+        const userLon = parseFloat(longitude);
+  
+        const sortedHotels = allHotels
+          .map((hotel) => {
+            const hotelLat = hotel.location.latitude;
+            const hotelLon = hotel.location.longitude;
+  
+            const distance = hotelLat && hotelLon
+              ? getDistanceFromLatLonInKm(userLat, userLon, hotelLat, hotelLon)
+              : Infinity;
+  
+            return { ...hotel._doc, distance };
+          })
+          .sort((a, b) => a.distance - b.distance);
+  
+        console.log("Sorted hotels based on location:");
+        sortedHotels.forEach(h => console.log(h.name, h.distance));
+  
+        return res.status(200).send(sortedHotels);
+      }
+  
+      // If location not available
+      return res.status(200).send(allHotels);
+  
     } catch (error) {
-
-        console.log(error);
-        res.status(500).send({message:"There is error from server side 'HotelController'."});
+      console.error(error);
+      return res.status(500).send({ message: "Server error in getAllHotel" });
     }
-};
+  };
+  
+  
 
 const deleteHotel = async (req,res) =>{
      
