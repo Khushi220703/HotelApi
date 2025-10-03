@@ -127,3 +127,26 @@ The backend API should now be running on `http://localhost:5000`.
 
 ---
 
+## Screenshots
+
+### Home Page
+![Home Page](https://github.com/user-attachments/assets/7b66a114-db0e-49b3-8573-efa127c80b42)
+
+### Responsive View
+![Responsive View](https://github.com/user-attachments/assets/f036dbe6-ae8a-4add-ba29-19b4ee428af0)
+
+### List of Hotels Based on User's Location
+![Hotel List](https://github.com/user-attachments/assets/9a94b0ad-d89a-4318-b1ee-40f1cc886e92)
+
+### Adding a Hotel by Admin
+![Add Hotel 1](https://github.com/user-attachments/assets/f81b07b8-5601-4b05-a1f1-f3e6acdc518f)
+![Add Hotel 2](https://github.com/user-attachments/assets/a152f33f-04d6-4569-8e1e-d31c9dca25c7)
+
+### Hotel Detail Page
+_Admin can delete hotel; users can book and review hotels_
+![Hotel Detail 1](https://github.com/user-attachments/assets/15bb4b97-8cf2-4a0c-a72b-000d4af3d4d6)
+![Hotel Detail 2](https://github.com/user-attachments/assets/83be3cda-4a7a-45b7-af6f-279c009f783a)
+
+### Book Hotel
+![Book Hotel](https://github.com/user-attachments/assets/bd216623-53f0-4466-9cec-71cb42dcb8c2)
+
